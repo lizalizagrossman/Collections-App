@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct Course: Decodable {
+struct Course: Codable {
     let name: String?
     let imageUrl: URL?
-    let number_of_lessons: Int?
-    let number_of_tests: Int?
+    let numberOfLessons: Int?
+    let numberOfTests: Int?
 }
 
 struct SwiftBookInfo: Decodable {

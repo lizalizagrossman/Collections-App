@@ -7,21 +7,36 @@
 
 import UIKit
 
-enum Link: String {
-    case imageURL = "https://applelives.com/wp-content/uploads/2016/03/iPhone-SE-11.jpeg"
-    case courseURL = "https://swiftbook.ru//wp-content/uploads/api/api_course"
-    case coursesURL = "https://swiftbook.ru//wp-content/uploads/api/api_courses"
-    case aboutUsURL = "https://swiftbook.ru//wp-content/uploads/api/api_website_description"
-    case aboutUsURL2 = "https://swiftbook.ru//wp-content/uploads/api/api_missing_or_wrong_fields"
-}
-
-enum UserAction: String, CaseIterable  {
-    case showImage = "Show Image"
-    case fetchCourse = "Fetch Course"
-    case fetchCourses = "Fetch Courses"
-    case aboutSwiftBook = "About SwiftBook"
-    case aboutSwiftBook2 = "About Swift Book 2"
-    case showCourses = "Show Courses"
+enum UserAction: CaseIterable  {
+    case showImage
+    case fetchCourse
+    case fetchCourses
+    case aboutSwiftBook
+    case aboutSwiftBook2
+    case showCourses
+    case postRequestWithDict
+    case postRequestWithModel
+    
+    var title: String {
+        switch self{
+        case .showImage:
+            return "Show Image"
+        case .fetchCourse:
+            return "Fetch Course"
+        case .fetchCourses:
+            return "Fetch Courses"
+        case .aboutSwiftBook:
+            return "About SwiftBook"
+        case .aboutSwiftBook2:
+            return "About Swift Book 2"
+        case .showCourses:
+            return "Show Courses"
+        case .postRequestWithDict:
+            return "POST RQST with Dict"
+        case .postRequestWithModel:
+            return "POST RQST with Model"
+        }
+    }
 }
 
 enum Alert {
@@ -50,6 +65,7 @@ enum Alert {
 final class MainViewController: UICollectionViewController {
     
     private let userActions = UserAction.allCases
+    private let networkManager = NetworkManager.shared
     
     // MARK: UICollectionView Datasource
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -59,7 +75,7 @@ final class MainViewController: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
         guard let cell = cell as? UserActionCell else { return UICollectionViewCell() }
-        cell.userActionLabel.text = userActions[indexPath.item].rawValue
+        cell.userActionLabel.text = userActions[indexPath.item].title
         
         return cell
     }
@@ -76,10 +92,19 @@ final class MainViewController: UICollectionViewController {
         case .aboutSwiftBook: fetchInfoAboutUs()
         case .aboutSwiftBook2: fetchInfoAboutUsWithEmptyFields()
         case .showCourses: performSegue(withIdentifier: "showCourses", sender: nil)
+        case .postRequestWithDict: postRequestWithDict()
+        case .postRequestWithModel: postRequestWithModel()
         }
     }
     
     //MARK: - Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showCourses" {
+            guard let coursesVC = segue.destination as? CoursesTableViewController else { return }
+            coursesVC.fetchCourses()
+        }
+    }
 
     //MARK: - Private Methods
     private func showAlert(withStatus status: Alert) {
@@ -108,91 +133,91 @@ extension MainViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - Networking
 extension MainViewController {
     private func fetchCourse() {
-        guard let url = URL(string: Link.courseURL.rawValue) else { return }
-        
-        URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
-            guard let data else {
-                print(error?.localizedDescription ?? "No error description")
-                return
-            }
-            
-            let decoder = JSONDecoder()
-            
-            do {
-                let course = try decoder.decode(Course.self, from: data)
-                print(course)
-                self?.showAlert(withStatus: .success)
-            } catch let error {
-                print(error.localizedDescription)
-                self?.showAlert(withStatus: .failed)
-            }
-            
-        }.resume()
+        networkManager.fetch(Course.self, from: Link.courseURL.url) { [weak self] result in
+                switch result {
+                case .success(let course):
+                    print(course)
+                    self?.showAlert(withStatus: .success)
+                case .failure(let error):
+                    print(error)
+                    self?.showAlert(withStatus: .failed)
+                }
+        }
     }
     private func fetchCourses() {
-        guard let url = URL(string: Link.coursesURL.rawValue) else { return }
-        
-        URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
-            guard let data else {
-                print(error?.localizedDescription ?? "No error description")
-                return
-            }
-            
-            let decoder = JSONDecoder()
-            
-            do {
-                let courses = try decoder.decode([Course].self, from: data)
-                print(courses)
-                self?.showAlert(withStatus: .success)
-            } catch let error {
-                print(error.localizedDescription)
-                self?.showAlert(withStatus: .failed)
-            }
-            
-        }.resume()
+        networkManager.fetch([Course].self, from: Link.coursesURL.url) { [weak self] result in
+                switch result {
+                case .success(let courses):
+                    print(courses)
+                    self?.showAlert(withStatus: .success)
+                case .failure(let error):
+                    print(error)
+                    self?.showAlert(withStatus: .failed)
+                }
+        }
     }
     
     private func fetchInfoAboutUs() {
-        guard let url = URL(string: Link.aboutUsURL.rawValue) else { return }
-                
-        URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
-            guard let data else {
-                print(error?.localizedDescription ?? "No error description")
-                return
-            }
-            
-            let decoder = JSONDecoder()
-            
-            do {
-                let sbInfo = try decoder.decode(SwiftBookInfo.self, from: data)
-                print(sbInfo)
-                self?.showAlert(withStatus: .success)
-            } catch let error {
-                print(error)
-                self?.showAlert(withStatus: .failed)
-            }
-        }.resume()
+        networkManager.fetch(SwiftBookInfo.self, from: Link.aboutUsURL.url) { [weak self] result in
+                switch result {
+                case .success(let info):
+                    print(info)
+                    self?.showAlert(withStatus: .success)
+                case .failure(let error):
+                    print(error)
+                    self?.showAlert(withStatus: .failed)
+                }
+        }
     }
     
     private func fetchInfoAboutUsWithEmptyFields() {
-        guard let url = URL(string: Link.aboutUsURL2.rawValue) else { return }
-                
-        URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
-            guard let data else {
-                print(error?.localizedDescription ?? "No error description")
-                return
-            }
-            
-            let decoder = JSONDecoder()
-            
-            do {
-                let sbInfo = try decoder.decode(SwiftBookInfo.self, from: data)
-                print(sbInfo)
+        networkManager.fetch(Course.self, from: Link.aboutUsURL2.url) { [weak self] result in
+                switch result {
+                case .success(let course):
+                    print(course)
+                    self?.showAlert(withStatus: .success)
+                case .failure(let error):
+                    print(error)
+                    self?.showAlert(withStatus: .failed)
+                }
+        }
+    }
+    
+    private func postRequestWithDict() {
+        let parameters = [
+            "name": "Networking",
+            "imageUrl": "image Url",
+            "numberOfLessons": "10",
+            "numberOfTests": "8"
+        ]
+        
+        networkManager.postRequest(with: parameters, to: Link.postRequest.url) { [weak self] result in
+            switch result {
+            case .success(let json):
+                print(json)
                 self?.showAlert(withStatus: .success)
-            } catch let error {
-                print(error.localizedDescription)
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
+    private func postRequestWithModel() {
+        let course = Course(name: "Networking",
+                            imageUrl: Link.imageURL.url,
+                            numberOfLessons: 10,
+                            numberOfTests: 5
+        )
+        
+        networkManager.postRequest(with: course, to: Link.postRequest.url) { [weak self] result in
+            switch result {
+            case .success(let course):
+                print(course)
+                self?.showAlert(withStatus: .success)
+            case .failure(let error):
+                print(error)
                 self?.showAlert(withStatus: .failed)
             }
-        }.resume()
+        }
     }
 }

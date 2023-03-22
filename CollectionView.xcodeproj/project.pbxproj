@@ -16,6 +16,8 @@
 		B32D431E29C8A4950080E186 /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32D431D29C8A4950080E186 /* ImageViewController.swift */; };
 		B32D432029C8A4E70080E186 /* CoursesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32D431F29C8A4E70080E186 /* CoursesTableViewController.swift */; };
 		B3C05A7429C8A775007F24A8 /* UserActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C05A7329C8A775007F24A8 /* UserActionCell.swift */; };
+		B3C05A9F29CB704B007F24A8 /* CourseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C05A9E29CB704B007F24A8 /* CourseCell.swift */; };
+		B3C05AA129CB8A8A007F24A8 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C05AA029CB8A8A007F24A8 /* NetworkManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,8 @@
 		B32D431F29C8A4E70080E186 /* CoursesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesTableViewController.swift; sourceTree = "<group>"; };
 		B3C05A7329C8A775007F24A8 /* UserActionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActionCell.swift; sourceTree = "<group>"; };
 		B3C05A7529C8D73A007F24A8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3C05A9E29CB704B007F24A8 /* CourseCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseCell.swift; sourceTree = "<group>"; };
+		B3C05AA029CB8A8A007F24A8 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				B3C05A7329C8A775007F24A8 /* UserActionCell.swift */,
+				B3C05A9E29CB704B007F24A8 /* CourseCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -102,6 +107,7 @@
 		B32D431929C8A3540080E186 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				B3C05AA029CB8A8A007F24A8 /* NetworkManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -206,6 +212,8 @@
 				B32D431829C8A3360080E186 /* Course.swift in Sources */,
 				B3C05A7429C8A775007F24A8 /* UserActionCell.swift in Sources */,
 				B32D42FC29C788880080E186 /* MainViewController.swift in Sources */,
+				B3C05A9F29CB704B007F24A8 /* CourseCell.swift in Sources */,
+				B3C05AA129CB8A8A007F24A8 /* NetworkManager.swift in Sources */,
 				B32D431E29C8A4950080E186 /* ImageViewController.swift in Sources */,
 				B32D42F829C788880080E186 /* AppDelegate.swift in Sources */,
 				B32D432029C8A4E70080E186 /* CoursesTableViewController.swift in Sources */,
